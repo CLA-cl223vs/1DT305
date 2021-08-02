@@ -1,0 +1,34 @@
+#
+#
+# EXAMPLE OF section in /etc/lighttpd.conf
+#
+#
+
+
+
+#        
+#       vy
+#
+$HTTP["host"] =~ "^vy\.villayddinge\.lan$" {
+        server.document-root        = "/home/conal/public_html/VY"
+        accesslog.filename          = "/var/log/lighttpd/VY/access.log"
+                        
+        url.redirect += (
+                "^/$" => "/cgi-bin/index.cgi"
+        )
+        
+	# for IoT version
+        url.rewrite = (
+	        "^/iot(\?.*)?$" => "/cgi-bin/iot.cgi$1",
+        )
+	$HTTP["useragent"] =~ "(Arduino)"{
+		url.rewrite = ( "^/(.*)" => "/cgi-bin/iot.cgi/${qsa}" )
+	}
+
+	# for mobile version
+	$HTTP["useragent"] =~ "(Android|iPhone)"{
+		url.rewrite = ( "^/(.*)" => "/cgi-bin/m.cgi/${qsa}" )
+	}
+
+}        
+
